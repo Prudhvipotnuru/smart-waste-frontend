@@ -18,7 +18,7 @@ function Landing(){
           <h1 className="text-black text-4xl font-bold">Transforming Waste Management with Technology</h1>
           <h3 className="text-black">Track waste collection, improve segregation, and ensure accountability 
             using a QR-based smart system.</h3>
-          <Button>Get Started</Button>
+          <Button onClick={()=>setShowLogin(true)}>Get Started</Button>
         </div>
       </div>
     </>
