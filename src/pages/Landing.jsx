@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Button from "../style-components/Button";
+import LoginModal from "../components/LoginModal";
 
 function Landing(){
   const [showLogin,setShowLogin] = useState(false);
