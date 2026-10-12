@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "../style-components/Button";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function LoginModal({ onClose }) {
   const [error,setError] = useState('');
@@ -9,6 +10,7 @@ function LoginModal({ onClose }) {
   const [username,setUsername] = useState('');
   const [password,setPassword] = useState('');
   const navigate = useNavigate();
+  const {login} = useAuth();
 
   async function handleSubmit(e) {
   e.preventDefault();
@@ -16,19 +18,12 @@ function LoginModal({ onClose }) {
   setLoading(true);
   console.log("login button clicked");
   try {
-    const { data } = await api.post('/login', { username, password })
-    localStorage.setItem('token', data.token)
+    const { data } = await api.post('/login', { username, password });
+    const user = login(data.token);
 
-    const payload = JSON.parse(atob(data.token.split('.')[1]))   // decode JWT
-    const roles = payload.roles.map(r => r.authority)            // e.g. ["ROLE_ADMIN"]
-
-    if (data.mustChangePassword) {
-      navigate('/change-password')
-    } else if (roles.includes('ROLE_ADMIN')) {
-      navigate('/admin/houses')
-    } else {
-      navigate('/collector/scan')
-    }
+    if (data.mustChangePassword) navigate('/change-password');
+    else if (user.role === 'ADMIN') navigate('/admin/houses');
+    else navigate('/collector/scan');
   } catch (err) {
     setError(err.response?.data?.message || 'Invalid credentials')
   } finally {
